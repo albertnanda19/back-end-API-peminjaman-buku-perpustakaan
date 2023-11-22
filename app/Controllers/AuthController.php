@@ -54,16 +54,25 @@ class AuthController extends ResourceController
     }
 
     private function generateToken($user)
-    {
-        $key = getenv('JWT_SECRET_KEY') ?: 'default-secret-key';
-        $algorithm = 'HS256';
-        $payload = [
-            'iss' => 'your-issuer', 
-            'sub' => $user['id'],
-            'iat' => time(),
-            'exp' => time() + 3600 
-        ];
+{
+    $key = getenv('JWT_SECRET_KEY') ?: 'default-secret-key';
+    $algorithm = 'HS256';
+    $accessTokenExp = time() + 3600; 
+    $refreshTokenExp = time() + (30 * 24 * 3600); 
 
-        return JWT::encode($payload, $key, $algorithm);
-    }
+    $payload = [
+        'iss' => 'your-issuer',
+        'sub' => $user['id'],
+        'iat' => time(),
+        'exp' => $accessTokenExp,
+    ];
+
+    $accessToken = JWT::encode($payload, $key, $algorithm);
+
+    $payload['exp'] = $refreshTokenExp;
+    $refreshToken = JWT::encode($payload, $key, $algorithm);
+
+    return ['access_token' => $accessToken, 'refresh_token' => $refreshToken];
+}
+
 }
