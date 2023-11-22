@@ -4,6 +4,7 @@ namespace App\Controllers;
 
 use CodeIgniter\RESTful\ResourceController;
 use App\Models\UserModel;
+use App\Models\AdminModel;
 use \Firebase\JWT\JWT;
 
 class AuthController extends ResourceController
@@ -53,26 +54,43 @@ class AuthController extends ResourceController
         return $this->respond(['token' => $token]);
     }
 
+    public function adminLogin()
+    {
+        $model = new AdminModel(); // Gunakan AdminModel
+        $username = $this->request->getVar('username');
+        $password = $this->request->getVar('password');
+
+        $admin = $model->where('username', $username)->first();
+
+        if (!$admin || !password_verify($password, $admin['password'])) {
+            return $this->failUnauthorized('Invalid Login Credentials');
+        }
+
+        $token = $this->generateToken($admin);
+
+        return $this->respond(['token' => $token]);
+    }
+
     private function generateToken($user)
-{
-    $key = getenv('JWT_SECRET_KEY') ?: 'default-secret-key';
-    $algorithm = 'HS256';
-    $accessTokenExp = time() + 3600; 
-    $refreshTokenExp = time() + (30 * 24 * 3600); 
+    {
+        $key = getenv('JWT_SECRET_KEY') ?: 'default-secret-key';
+        $algorithm = 'HS256';
+        $accessTokenExp = time() + 3600; 
+        $refreshTokenExp = time() + (30 * 24 * 3600); 
 
-    $payload = [
-        'iss' => 'your-issuer',
-        'sub' => $user['id'],
-        'iat' => time(),
-        'exp' => $accessTokenExp,
-    ];
+        $payload = [
+            'iss' => 'your-issuer',
+            'sub' => $user['id'],
+            'iat' => time(),
+            'exp' => $accessTokenExp,
+        ];
 
-    $accessToken = JWT::encode($payload, $key, $algorithm);
+        $accessToken = JWT::encode($payload, $key, $algorithm);
 
-    $payload['exp'] = $refreshTokenExp;
-    $refreshToken = JWT::encode($payload, $key, $algorithm);
+        $payload['exp'] = $refreshTokenExp;
+        $refreshToken = JWT::encode($payload, $key, $algorithm);
 
-    return ['access_token' => $accessToken, 'refresh_token' => $refreshToken];
-}
+        return ['access_token' => $accessToken, 'refresh_token' => $refreshToken];
+    }
 
 }
