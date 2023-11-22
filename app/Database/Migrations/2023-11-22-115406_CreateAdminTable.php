@@ -4,7 +4,7 @@ namespace App\Database\Migrations;
 
 use CodeIgniter\Database\Migration;
 
-class CreateUsersTable extends Migration
+class CreateAdminTable extends Migration
 {
     public function up()
     {
@@ -40,11 +40,11 @@ class CreateUsersTable extends Migration
 
         $this->forge->addPrimaryKey('id');
 
-        $this->forge->createTable('users', true);
+        $this->forge->createTable('admin', true);
     }
 
     public function down()
     {
-        $this->forge->dropTable('users', true);
+        $this->forge->dropTable('admin', true);
     }
 }
