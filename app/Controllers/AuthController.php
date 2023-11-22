@@ -13,21 +13,21 @@ class AuthController extends ResourceController
     public function register()
     {
         $rules = [
-          'username' => 'required|is_unique[users.username]',
-          'email'=> 'required|valid_email|is_unique[users.email]',
-          'password' => 'required|min_length[8]',
-          'confirm_password'=>'required|matches[password]'
+            'username' => 'required|is_unique[users.username]',
+            'email' => 'required|valid_email|is_unique[users.email]',
+            'password' => 'required|min_length[8]',
+            'confirm_password' => 'required|matches[password]'
         ];
 
-        if(!$this->validate($rules)){
+        if (!$this->validate($rules)) {
             return $this->failValidationErrors($this->validator->getErrors());
         }
 
         $model = new UserModel();
         $data = [
-            'username'=>$this->request->getVar('username'),
-            'email'=>$this->request->getVar('email'),
-            'password'=>password_hash($this->request->getVar('password'), PASSWORD_DEFAULT)
+            'username' => $this->request->getVar('username'),
+            'email' => $this->request->getVar('email'),
+            'password' => password_hash($this->request->getVar('password'), PASSWORD_DEFAULT)
         ];
 
         $model->insert($data);
@@ -43,7 +43,7 @@ class AuthController extends ResourceController
 
         $user = $model->where('username', $username)->first();
 
-        if(!$user || !password_verify($password, $user['password'])){
+        if (!$user || !password_verify($password, $user['password'])) {
             return $this->failUnauthorized('Invalid Login Credentials');
         }
 
