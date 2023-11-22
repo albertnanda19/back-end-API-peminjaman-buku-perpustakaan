@@ -4,6 +4,7 @@ namespace App\Controllers;
 
 use CodeIgniter\RESTful\ResourceController;
 use App\Models\UserModel;
+use \Firebase\JWT\JWT;
 
 class AuthController extends ResourceController
 {
@@ -47,6 +48,22 @@ class AuthController extends ResourceController
             return $this->failUnauthorized('Invalid Login Credentials');
         }
 
-        return $this->respond(['message' => 'Login Berhasil']);
+        $token = $this->generateToken($user);
+
+        return $this->respond(['token' => $token]);
+    }
+
+    private function generateToken($user)
+    {
+        $key = getenv('JWT_SECRET_KEY') ?: 'default-secret-key';
+        $algorithm = 'HS256';
+        $payload = [
+            'iss' => 'your-issuer', 
+            'sub' => $user['id'],
+            'iat' => time(),
+            'exp' => time() + 3600 
+        ];
+
+        return JWT::encode($payload, $key, $algorithm);
     }
 }
