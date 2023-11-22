@@ -42,11 +42,11 @@ class CreateBukuTable extends Migration
             ],
             'created_at' => [
                 'type' => 'TIMESTAMP',
-                'default' => 'CURRENT_TIMESTAMP',
+                'null' => true,
             ],
             'updated_at' => [
                 'type' => 'TIMESTAMP',
-                'default' => 'CURRENT_TIMESTAMP',
+                'null' => true,
                 'on update' => 'CURRENT_TIMESTAMP',
             ],
         ]);

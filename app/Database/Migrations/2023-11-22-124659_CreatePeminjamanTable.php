@@ -4,7 +4,7 @@ namespace App\Database\Migrations;
 
 use CodeIgniter\Database\Migration;
 
-class CreateAdminTable extends Migration
+class CreatePeminjamanTable extends Migration
 {
     public function up()
     {
@@ -15,17 +15,18 @@ class CreateAdminTable extends Migration
                 'unsigned' => true,
                 'auto_increment' => true,
             ],
-            'username' => [
+            'id_buku' => [
+                'type' => 'INT',
+                'unsigned' => true,
+            ],
+            'nama_peminjam' => [
                 'type' => 'VARCHAR',
                 'constraint' => 255,
             ],
-            'email' => [
-                'type' => 'VARCHAR',
-                'constraint' => 255,
-            ],
-            'password' => [
-                'type' => 'VARCHAR',
-                'constraint' => 255,
+            'status' => [
+                'type' => 'ENUM',
+                'constraint' => ['approve', 'reject'],
+                'default' => 'approve',
             ],
             'created_at' => [
                 'type' => 'TIMESTAMP',
@@ -39,12 +40,13 @@ class CreateAdminTable extends Migration
         ]);
 
         $this->forge->addPrimaryKey('id');
+        $this->forge->addForeignKey('id_buku', 'buku', 'id', 'CASCADE', 'CASCADE');
 
-        $this->forge->createTable('admin', true);
+        $this->forge->createTable('peminjaman', true);
     }
 
     public function down()
     {
-        $this->forge->dropTable('admin', true);
+        $this->forge->dropTable('peminjaman', true);
     }
 }
