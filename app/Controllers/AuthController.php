@@ -56,7 +56,7 @@ class AuthController extends ResourceController
 
     public function adminLogin()
     {
-        $model = new AdminModel(); // Gunakan AdminModel
+        $model = new AdminModel(); 
         $username = $this->request->getVar('username');
         $password = $this->request->getVar('password');
 
@@ -73,22 +73,23 @@ class AuthController extends ResourceController
 
     private function generateToken($user)
     {
-        $key = getenv('JWT_SECRET_KEY') ?: 'default-secret-key';
-        $algorithm = 'HS256';
-        $accessTokenExp = time() + 3600; 
-        $refreshTokenExp = time() + (30 * 24 * 3600); 
+        $privateKey = file_get_contents('../private_key.pem'); 
+        $algorithm = 'RS256';
+
+        $accessTokenExp = time() + 3600;
+        $refreshTokenExp = time() + (30 * 24 * 3600);
 
         $payload = [
-            'iss' => 'your-issuer',
+            'iss' => 'Perpustakaan',
             'sub' => $user['id'],
             'iat' => time(),
             'exp' => $accessTokenExp,
         ];
 
-        $accessToken = JWT::encode($payload, $key, $algorithm);
+        $accessToken = JWT::encode($payload, $privateKey, $algorithm);
 
         $payload['exp'] = $refreshTokenExp;
-        $refreshToken = JWT::encode($payload, $key, $algorithm);
+        $refreshToken = JWT::encode($payload, $privateKey, $algorithm);
 
         return ['access_token' => $accessToken, 'refresh_token' => $refreshToken];
     }
