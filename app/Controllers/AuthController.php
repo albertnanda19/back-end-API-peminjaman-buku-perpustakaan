@@ -49,14 +49,18 @@ class AuthController extends ResourceController
             return $this->failUnauthorized('Invalid Login Credentials');
         }
 
-        $token = $this->generateToken($user);
+        $accessTokenExp = time() + 3600;
+        $refreshTokenExp = time() + (30 * 24 * 3600);
 
-        return $this->respond(['token' => $token]);
+        $accessToken = $this->generateToken($user['id'], $accessTokenExp);
+        $refreshToken = $this->generateToken($user['id'], $refreshTokenExp);
+
+        return $this->respond(['access_token' => $accessToken, 'refresh_token' => $refreshToken]);
     }
 
     public function adminLogin()
     {
-        $model = new AdminModel(); 
+        $model = new AdminModel();
         $username = $this->request->getVar('username');
         $password = $this->request->getVar('password');
 
@@ -66,32 +70,27 @@ class AuthController extends ResourceController
             return $this->failUnauthorized('Invalid Login Credentials');
         }
 
-        $token = $this->generateToken($admin);
-
-        return $this->respond(['token' => $token]);
-    }
-
-    private function generateToken($user)
-    {
-        $privateKey = file_get_contents('../private_key.pem'); 
-        $algorithm = 'RS256';
-
         $accessTokenExp = time() + 3600;
         $refreshTokenExp = time() + (30 * 24 * 3600);
 
-        $payload = [
-            'iss' => 'Perpustakaan',
-            'sub' => $user['id'],
-            'iat' => time(),
-            'exp' => $accessTokenExp,
-        ];
+        $accessToken = $this->generateToken($admin['id'], $accessTokenExp);
+        $refreshToken = $this->generateToken($admin['id'], $refreshTokenExp);
 
-        $accessToken = JWT::encode($payload, $privateKey, $algorithm);
-
-        $payload['exp'] = $refreshTokenExp;
-        $refreshToken = JWT::encode($payload, $privateKey, $algorithm);
-
-        return ['access_token' => $accessToken, 'refresh_token' => $refreshToken];
+        return $this->respond(['access_token' => $accessToken, 'refresh_token' => $refreshToken]);
     }
 
+    private function generateToken($userId, $expiration)
+    {
+        $privateKey = file_get_contents('../private_key.pem');
+        $algorithm = 'RS256';
+
+        $payload = [
+            'iss' => 'Perpustakaan',
+            'sub' => $userId,
+            'iat' => time(),
+            'exp' => $expiration,
+        ];
+
+        return JWT::encode($payload, $privateKey, $algorithm);
+    }
 }
