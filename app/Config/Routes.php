@@ -12,4 +12,5 @@ $routes->group('admin', ['namespace' => 'App\Controllers'], function ($routes) {
 $routes->group('books', ['namespace' => 'App\Controllers', 'filter' => 'auth'], function ($routes) {
     $routes->get('/', 'BookController::index');
     $routes->get('(:num)', 'BookController::show/$1');
+    $routes->post('borrow/(:num)/(:num)', 'BookController::borrowBook/$1/$2');
 });
