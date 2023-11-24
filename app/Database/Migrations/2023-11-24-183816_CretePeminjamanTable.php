@@ -26,8 +26,8 @@ class CreatePeminjamanTable extends Migration
             ],
             'status' => [
                 'type' => 'ENUM',
-                'constraint' => ['approve', 'reject'],
-                'null' => true,
+                'constraint' => ['pending', 'approve', 'reject'],
+                'default' => 'pending',
             ],
             'tanggal_peminjaman' => [
                 'type' => 'DATE',
