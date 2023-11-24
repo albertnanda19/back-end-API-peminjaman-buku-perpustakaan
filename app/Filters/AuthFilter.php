@@ -21,7 +21,6 @@ class AuthFilter implements FilterInterface
             if ($token) {
                 $decoded = JWT::decode($token, new \Firebase\JWT\Key($key, 'HS256'));
 
-                // Set the decoded token as a request attribute
                 $request->decodedToken = $decoded;
 
                 if ($decoded->role !== 'admin' && $decoded->role !== 'member') {
