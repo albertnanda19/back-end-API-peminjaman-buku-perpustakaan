@@ -2,33 +2,51 @@
 
 namespace App\Filters;
 
-use CodeIgniter\API\ResponseTrait;
-use CodeIgniter\Filters\FilterInterface;
 use CodeIgniter\HTTP\RequestInterface;
 use CodeIgniter\HTTP\ResponseInterface;
+use CodeIgniter\Filters\FilterInterface;
+use Firebase\JWT\JWT;
+use Firebase\JWT\ExpiredException;
+use CodeIgniter\Config\Services;
 
 class AuthFilter implements FilterInterface
 {
-    use ResponseTrait;
-
     public function before(RequestInterface $request, $arguments = null)
     {
-        $authHeader = $request->getServer('HTTP_AUTHORIZATION');
+        try {
+            $key = getenv('JWT_SECRET');
+            $authHeader = $request->getServer('HTTP_AUTHORIZATION');
+            list($token) = sscanf($authHeader, 'Bearer %s');
 
-        if (!$authHeader || !$this->isValidToken($authHeader)) {
-            return $this->failUnauthorized('Unauthorized Access');
+            if ($token) {
+                $decoded = JWT::decode($token, new \Firebase\JWT\Key($key, 'HS256'));
+
+                // Set the decoded token as a request attribute
+                $request->decodedToken = $decoded;
+
+                if ($decoded->role !== 'admin' && $decoded->role !== 'member') {
+                    return Services::response()
+                        ->setJSON(['error' => 'Access denied'])
+                        ->setStatusCode(ResponseInterface::HTTP_FORBIDDEN);
+                }
+            } else {
+                return Services::response()
+                    ->setJSON(['error' => 'Token required'])
+                    ->setStatusCode(ResponseInterface::HTTP_UNAUTHORIZED);
+            }
+        } catch (ExpiredException $e) {
+            return Services::response()
+                ->setJSON(['error' => 'Token expired'])
+                ->setStatusCode(ResponseInterface::HTTP_UNAUTHORIZED);
+        } catch (\Exception $e) {
+            return Services::response()
+                ->setJSON(['error' => 'An error occurred while validating token'])
+                ->setStatusCode(ResponseInterface::HTTP_UNAUTHORIZED);
         }
-
-        return $request;
     }
 
     public function after(RequestInterface $request, ResponseInterface $response, $arguments = null)
     {
-        return $response;
-    }
-
-    private function isValidToken($authHeader)
-    {
-        return true;
+        // Optional implementation if needed after the request
     }
 }

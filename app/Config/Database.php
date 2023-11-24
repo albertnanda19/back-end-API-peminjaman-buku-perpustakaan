@@ -3,17 +3,16 @@
 namespace Config;
 
 use CodeIgniter\Database\Config;
+
+/**
+ * Database Configuration
+ */
 class Database extends Config
 {
     /**
      * The directory that holds the Migrations
      * and Seeds directories.
      */
-
-     public $aliases = [
-        'Seeder' => \CodeIgniter\Database\Seeder::class,
-    ];
-    
     public string $filesPath = APPPATH . 'Database' . DIRECTORY_SEPARATOR;
 
     /**
@@ -28,9 +27,9 @@ class Database extends Config
     public array $default = [
         'DSN'          => '',
         'hostname'     => 'localhost',
-        'username'     => 'root',
+        'username'     => '',
         'password'     => '',
-        'database'     => 'perpustakaan',
+        'database'     => '',
         'DBDriver'     => 'MySQLi',
         'DBPrefix'     => '',
         'pConnect'     => false,
@@ -45,6 +44,11 @@ class Database extends Config
         'port'         => 3306,
         'numberNative' => false,
     ];
+
+    /**
+     * This database connection is used when
+     * running PHPUnit database tests.
+     */
     public array $tests = [
         'DSN'         => '',
         'hostname'    => '127.0.0.1',
@@ -52,7 +56,7 @@ class Database extends Config
         'password'    => '',
         'database'    => ':memory:',
         'DBDriver'    => 'SQLite3',
-        'DBPrefix'    => 'db_',  
+        'DBPrefix'    => 'db_',  // Needed to ensure we're working correctly with prefixes live. DO NOT REMOVE FOR CI DEVS
         'pConnect'    => false,
         'DBDebug'     => true,
         'charset'     => 'utf8',
@@ -70,6 +74,10 @@ class Database extends Config
     public function __construct()
     {
         parent::__construct();
+
+        // Ensure that we always set the database group to 'tests' if
+        // we are currently running an automated test suite, so that
+        // we don't overwrite live data on accident.
         if (ENVIRONMENT === 'testing') {
             $this->defaultGroup = 'tests';
         }

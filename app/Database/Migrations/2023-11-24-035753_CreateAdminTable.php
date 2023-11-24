@@ -17,34 +17,23 @@ class CreateAdminTable extends Migration
             ],
             'username' => [
                 'type' => 'VARCHAR',
-                'constraint' => 255,
+                'constraint' => '100',
             ],
             'email' => [
                 'type' => 'VARCHAR',
-                'constraint' => 255,
+                'constraint' => '100',
             ],
             'password' => [
                 'type' => 'VARCHAR',
-                'constraint' => 255,
-            ],
-            'created_at' => [
-                'type' => 'TIMESTAMP',
-                'null' => true,
-            ],
-            'updated_at' => [
-                'type' => 'TIMESTAMP',
-                'null' => true,
-                'on update' => 'CURRENT_TIMESTAMP',
+                'constraint' => '255',
             ],
         ]);
-
-        $this->forge->addPrimaryKey('id');
-
-        $this->forge->createTable('admin', true);
+        $this->forge->addKey('id', true);
+        $this->forge->createTable('admins');
     }
 
     public function down()
     {
-        $this->forge->dropTable('admin', true);
+        $this->forge->dropTable('admins');
     }
 }

@@ -9,13 +9,18 @@ class AdminSeeder extends Seeder
     public function run()
     {
         $data = [
-            'username' => 'admin',
-            'email' => 'admin@example.com',
-            'password' => password_hash('admin123', PASSWORD_DEFAULT),
-            'created_at' => date('Y-m-d H:i:s'),
-            'updated_at' => date('Y-m-d H:i:s'),
+            [
+                'username' => 'admin1',
+                'email'    => 'admin1@example.com',
+                'password' => password_hash('adminpassword1', PASSWORD_DEFAULT),
+            ],
+            [
+                'username' => 'admin2',
+                'email'    => 'admin2@example.com',
+                'password' => password_hash('adminpassword2', PASSWORD_DEFAULT),
+            ],
         ];
 
-        $this->db->table('admin')->insert($data);
+        $this->db->table('admins')->insertBatch($data);
     }
 }

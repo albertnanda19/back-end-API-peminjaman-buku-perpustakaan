@@ -4,7 +4,7 @@ namespace App\Database\Migrations;
 
 use CodeIgniter\Database\Migration;
 
-class CreateBukuTable extends Migration
+class CreateBookTable extends Migration
 {
     public function up()
     {
@@ -17,47 +17,28 @@ class CreateBukuTable extends Migration
             ],
             'judul' => [
                 'type' => 'VARCHAR',
-                'constraint' => 255,
+                'constraint' => '255',
             ],
             'pengarang' => [
                 'type' => 'VARCHAR',
-                'constraint' => 255,
+                'constraint' => '255',
             ],
             'kategori' => [
                 'type' => 'VARCHAR',
-                'constraint' => 255,
-            ],
-            'tahun_terbit' => [
-                'type' => 'INT',
-                'constraint' => 4,
-            ],
-            'deskripsi' => [
-                'type' => 'TEXT',
-                'null' => true,
+                'constraint' => '255',
             ],
             'status' => [
                 'type' => 'ENUM',
                 'constraint' => ['available', 'unavailable'],
                 'default' => 'available',
             ],
-            'created_at' => [
-                'type' => 'TIMESTAMP',
-                'null' => true,
-            ],
-            'updated_at' => [
-                'type' => 'TIMESTAMP',
-                'null' => true,
-                'on update' => 'CURRENT_TIMESTAMP',
-            ],
         ]);
-
-        $this->forge->addPrimaryKey('id');
-
-        $this->forge->createTable('buku', true);
+        $this->forge->addKey('id', true);
+        $this->forge->createTable('books');
     }
 
     public function down()
     {
-        $this->forge->dropTable('buku', true);
+        $this->forge->dropTable('books');
     }
 }

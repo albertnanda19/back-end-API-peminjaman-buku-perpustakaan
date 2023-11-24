@@ -4,10 +4,9 @@ namespace App\Models;
 
 use CodeIgniter\Model;
 
-class UserModel extends Model
+class MemberModel extends Model
 {
-    protected $table = 'users';
+    protected $table = 'members';
     protected $primaryKey = 'id';
     protected $allowedFields = ['username', 'email', 'password'];
-    protected $returnType = 'array';
 }
