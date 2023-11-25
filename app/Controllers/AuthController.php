@@ -115,4 +115,30 @@ class AuthController extends Controller
 
         return $this->respond(['message' => 'Member registered successfully']);
     }
+
+    public function updateUsername($userId)
+    {
+        $memberModel = new MemberModel();
+
+        $member = $memberModel->find($userId);
+
+        if (!$member) {
+            return $this->failNotFound('Member not found');
+        }
+
+        $requestData = $this->request->getBody();
+
+        $validation = \Config\Services::validation();
+        $validation->setRules([
+            'username' => 'required|min_length[3]|max_length[255]',
+        ]);
+
+        if (!$validation->withRequest($this->request)->run()) {
+            return $this->fail($validation->getErrors());
+        }
+
+        $memberModel->update($userId, ['username' => $requestData['username']]);
+
+        return $this->respond(['message' => 'Username updated successfully']);
+    }
 }

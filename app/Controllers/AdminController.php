@@ -79,4 +79,19 @@ class AdminController extends BaseController
 
         return $this->respond(['members' => $members]);
     }
+
+    public function deleteMember($userId)
+    {
+        $memberModel = new MemberModel();
+
+        $member = $memberModel->find($userId);
+
+        if (!$member) {
+            return $this->failNotFound("Member nof found");
+        }
+
+        $memberModel->delete($userId);
+
+        return $this->respond(['message' => 'Member account deleted successfully']);
+    }
 }
