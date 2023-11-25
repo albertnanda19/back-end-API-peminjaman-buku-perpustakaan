@@ -94,4 +94,36 @@ class AdminController extends BaseController
 
         return $this->respond(['message' => 'Member account deleted successfully']);
     }
+
+    public function addBook()
+    {
+        $request = $this->request;
+
+        $validation = \Config\Services::validation();
+        $validation->setRules([
+            'judul' => 'required|max_length[255]',
+            'pengarang' => 'required|max_length[255]',
+            'kategori' => 'required|max_length[255]'
+        ]);
+
+        if (!$validation->withRequest($request)->run()) {
+            return $this->fail($validation->getErrors(), 400);
+        }
+
+        $judul = $request->getVar('judul');
+        $pengarang = $request->getVar('pengarang');
+        $kategori = $request->getVar('kategori');
+
+        $bookModel = new BookModel();
+        $data = [
+            'judul' => $judul,
+            'pengarang' => $pengarang,
+            'kategori' => $kategori,
+            'status' => 'available',
+        ];
+
+        $bookModel->insert($data);
+
+        return $this->respond(['message' => 'Book added successfully']);
+    }
 }

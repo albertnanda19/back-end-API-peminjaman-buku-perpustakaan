@@ -13,6 +13,7 @@ $routes->group('admin', ['namespace' => 'App\Controllers'], function ($routes) {
     $routes->post('reject/clear', 'AdminController::clearRejectedPeminjaman', ['filter' => 'adminauth']);
     $routes->get('members', 'AdminController::getAllMembers', ['filter' => 'adminauth']);
     $routes->delete('delete-member/(:num)', 'AdminController::deleteMember/$1', ['filter' => 'adminauth']);
+    $routes->put('add/book', 'AdminController::addBook', ['filter' => 'adminauth']);
 });
 
 $routes->group('books', ['namespace' => 'App\Controllers', 'filter' => 'auth'], function ($routes) {
