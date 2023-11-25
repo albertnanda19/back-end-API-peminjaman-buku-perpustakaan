@@ -5,6 +5,7 @@ namespace App\Controllers;
 use CodeIgniter\API\ResponseTrait;
 use App\Models\PeminjamanModel;
 use App\Models\BookModel;
+use App\Models\MemberModel;
 
 class AdminController extends BaseController
 {
@@ -12,13 +13,7 @@ class AdminController extends BaseController
 
     public function approvePeminjaman($peminjamanId)
     {
-        // Pastikan bahwa yang melakukan akses adalah admin
-        $decodedToken = $this->request->decodedToken;
-        if ($decodedToken->role !== 'admin') {
-            return $this->failForbidden('Access denied');
-        }
 
-        // Proses persetujuan peminjaman
         $peminjamanModel = new PeminjamanModel();
         $bookModel = new BookModel();
 
@@ -28,12 +23,60 @@ class AdminController extends BaseController
             return $this->failNotFound('Peminjaman not found');
         }
 
-        // Lakukan proses persetujuan peminjaman
         $peminjamanModel->update($peminjamanId, ['status' => 'approve']);
 
-        // Update status buku yang terkait menjadi 'unavailable'
         $bookModel->update($peminjaman['id_buku'], ['status' => 'unavailable']);
 
         return $this->respond(['message' => 'Peminjaman approved successfully']);
+    }
+
+    public function rejectPeminjaman($peminjamanId)
+    {
+        $peminjamanModel = new PeminjamanModel();
+        $bookModel = new BookModel();
+
+        $peminjaman = $peminjamanModel->find($peminjamanId);
+
+        if (!$peminjaman) {
+            return $this->failNotFound('Peminjaman not found');
+        }
+
+        $peminjamanModel->update($peminjamanId, ['status' => 'reject']);
+
+        if ($peminjaman['status'] === 'approve') {
+            $bookModel->update($peminjaman['id_buku'], ['status' => 'available']);
+        }
+
+        return $this->respond(['message' => 'Peminjaman rejected']);
+    }
+
+    public function clearRejectedPeminjaman()
+    {
+        $peminjamanModel = new PeminjamanModel();
+        $bookModel = new BookModel();
+
+        $rejectedPeminjaman = $peminjamanModel->where('status', 'reject')->findAll();
+
+        if (empty($rejectedPeminjaman)) {
+            return $this->respond(['message' => 'No rejected peminjaman found.']);
+        }
+
+        foreach ($rejectedPeminjaman as $peminjaman) {
+            $peminjamanModel->delete($peminjaman['id']);
+
+            $bookModel->update($peminjaman['id_buku'], ['status' => 'available']);
+        }
+
+        return $this->respond(['message' => 'All rejected peminjaman cleared successfully']);
+    }
+
+    public function getAllMembers()
+    {
+        $memberModel = new MemberModel();
+
+        // $members = $memberModel->findAll();
+        $members = $memberModel->select('id, username, email, created_at')->findAll();
+
+        return $this->respond(['members' => $members]);
     }
 }
