@@ -10,7 +10,7 @@ class BookSeeder extends Seeder
     {
         $faker = \Faker\Factory::create();
 
-        for ($i = 1; $i <= 10; $i++) {
+        for ($i = 1; $i <= 1000; $i++) {
             $data = [
                 'judul' => $faker->sentence(3),
                 'pengarang' => $faker->name,

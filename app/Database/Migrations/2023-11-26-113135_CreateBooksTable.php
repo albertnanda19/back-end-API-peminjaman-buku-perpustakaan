@@ -32,6 +32,10 @@ class CreateBookTable extends Migration
                 'constraint' => ['available', 'unavailable'],
                 'default' => 'available',
             ],
+            'jumlah' => [
+                'type' => 'INT',
+                'default' => 1,
+            ],
         ]);
         $this->forge->addKey('id', true);
         $this->forge->createTable('books');

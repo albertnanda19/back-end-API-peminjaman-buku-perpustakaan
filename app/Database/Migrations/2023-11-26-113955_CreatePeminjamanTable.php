@@ -35,6 +35,10 @@ class CreatePeminjamanTable extends Migration
             'tanggal_pengembalian' => [
                 'type' => 'DATE',
             ],
+            'jumlah' => [
+                'type' => 'INT',
+                'default' => 1,
+            ]
         ]);
 
         $this->forge->addKey('id', true);

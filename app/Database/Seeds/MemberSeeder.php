@@ -10,12 +10,12 @@ class MemberSeeder extends Seeder
     {
         $data = [
             [
-                'username' => 'member1',
+                'username' => 'user1',
                 'email'    => 'member1@example.com',
                 'password' => password_hash('password1', PASSWORD_DEFAULT),
             ],
             [
-                'username' => 'member2',
+                'username' => 'user2',
                 'email'    => 'member2@example.com',
                 'password' => password_hash('password2', PASSWORD_DEFAULT),
             ],
