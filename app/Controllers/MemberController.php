@@ -4,6 +4,7 @@ namespace App\Controllers;
 
 use CodeIgniter\API\ResponseTrait;
 use App\Models\MemberModel;
+use App\Models\PeminjamanModel;
 
 class MemberController extends BaseController
 {
@@ -32,5 +33,18 @@ class MemberController extends BaseController
         $memberModel->update($userId, ['username' => $newUsername]);
 
         return $this->respond(['message' => 'Username updated successfully']);
+    }
+
+    public function getPeminjamanUser($username)
+    {
+        $peminjamaModel = new PeminjamanModel();
+
+        $peminjaman = $peminjamaModel->where('nama_peminjam', $username)->findAll();
+
+        if (empty($peminjaman)) {
+            return $this->respond(['message' => 'No peminjaman found for this user.']);
+        }
+
+        return $this->respond(['peminjaman' => $peminjaman]);
     }
 }
