@@ -126,4 +126,74 @@ class AdminController extends BaseController
 
         return $this->respond(['message' => 'Book added successfully']);
     }
+
+    public function editBook($bookId)
+    {
+        $request = $this->request;
+
+        $bookModel = new BookModel();
+        $book = $bookModel->find($bookId);
+
+        if (!$book) {
+            return $this->failNotFound('Book not found');
+        }
+
+        $judul = $request->getVar('judul');
+        $pengarang = $request->getVar('pengarang');
+        $kategori = $request->getVar('kategori');
+
+        $validation = \Config\Services::validation();
+        $rules = [];
+
+        if (!empty($judul)) {
+            $rules['judul'] = 'required|max_length[255]';
+        }
+
+        if (!empty($pengarang)) {
+            $rules['pengarang'] = 'required|max_length[255]';
+        }
+
+        if (!empty($kategori)) {
+            $rules['kategori'] = 'required|max_length[255]';
+        }
+
+        $validation->setRules($rules);
+
+        if (!$validation->withRequest($request)->run()) {
+            return $this->fail($validation->getErrors(), 400);
+        }
+
+        $updateData = [];
+
+        if (!empty($judul)) {
+            $updatedData['judul'] = $judul;
+        }
+
+        if (!empty($pengarang)) {
+            $updatedData['pengarang'] = $pengarang;
+        }
+
+        if (!empty($kategori)) {
+            $updatedData['kategori'] = $kategori;
+        }
+
+        $bookModel->update($bookId, $updatedData);
+
+        return $this->respond(['message' => 'Book updated sucessfully']);
+    }
+
+    public function deleteBook($bookId)
+    {
+        $bookModel = new BookModel();
+
+        $book = $bookModel->find($bookId);
+
+        if (!$book) {
+            return $this->failNotFound('Book not found');
+        }
+
+        $bookModel->delete($bookId);
+
+        return $this->respond(['message' => 'Book deleted successfully']);
+    }
 }
