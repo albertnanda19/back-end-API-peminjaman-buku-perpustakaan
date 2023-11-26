@@ -10,12 +10,13 @@ class BookSeeder extends Seeder
     {
         $faker = \Faker\Factory::create();
 
-        for ($i = 1; $i <= 1000; $i++) {
+        for ($i = 1; $i <= 500; $i++) {
             $data = [
                 'judul' => $faker->sentence(3),
                 'pengarang' => $faker->name,
                 'kategori' => $faker->word,
                 'status' => 'available',
+                'jumlah' => $faker->numberBetween(10, 100),
             ];
 
             $this->db->table('books')->insert($data);

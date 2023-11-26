@@ -8,5 +8,5 @@ class BookModel extends Model
 {
     protected $table = 'books';
     protected $primaryKey = 'id';
-    protected $allowedFields = ['judul', 'pengarang', 'kategori', 'status'];
+    protected $allowedFields = ['judul', 'pengarang', 'kategori', 'status', 'jumlah'];
 }

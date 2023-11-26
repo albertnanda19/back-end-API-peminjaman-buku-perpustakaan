@@ -23,9 +23,15 @@ class AdminController extends BaseController
             return $this->failNotFound('Peminjaman not found');
         }
 
-        $peminjamanModel->update($peminjamanId, ['status' => 'approve']);
+        $remainingBooks = $bookModel->find($peminjaman['id_buku']);
+        $newQuantity = $remainingBooks['jumlah'] - $peminjaman['jumlah'];
+        $bookModel->update($peminjaman['id_buku'], ['jumlah' => $newQuantity]);
 
-        $bookModel->update($peminjaman['id_buku'], ['status' => 'unavailable']);
+        if ($newQuantity == 0) {
+            $bookModel->update($peminjaman['id_buku'], ['status' => 'unavailable']);
+        }
+
+        $peminjamanModel->update($peminjamanId, ['status' => 'approve']);
 
         return $this->respond(['message' => 'Peminjaman approved successfully']);
     }
@@ -74,7 +80,6 @@ class AdminController extends BaseController
     {
         $memberModel = new MemberModel();
 
-        // $members = $memberModel->findAll();
         $members = $memberModel->select('id, username, email, created_at')->findAll();
 
         return $this->respond(['members' => $members]);
