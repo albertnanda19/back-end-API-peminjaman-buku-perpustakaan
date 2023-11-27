@@ -34,7 +34,7 @@ class AuthController extends Controller
             return $this->failUnauthorized('Invalid credentials');
         }
 
-        $token = $this->generateToken($member['id'], 'member');
+        $token = $this->generateToken($member['id'], $member['username'], 'member');
 
         return $this->respond(['token' => $token]);
     }
@@ -61,18 +61,19 @@ class AuthController extends Controller
             return $this->failUnauthorized('Invalid credentials');
         }
 
-        $token = $this->generateToken($admin['id'], 'admin');
+        $token = $this->generateToken($admin['id'], $admin['username'], 'admin');
 
         return $this->respond(['token' => $token]);
     }
 
-    private function generateToken($id, $role)
+    private function generateToken($id, $username, $role)
     {
         $key = getenv('JWT_SECRET');
         $issuedAt = time();
         $expirationTime = $issuedAt + 3600;
         $payload = [
             'id' => $id,
+            'username' => $username,
             'role' => $role,
             'iat' => $issuedAt,
             'exp' => $expirationTime,
