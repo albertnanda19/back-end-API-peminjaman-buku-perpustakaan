@@ -1,13 +1,13 @@
 <?php
 
-$routes->group('member', ['namespace' => 'App\Controllers'], function ($routes) {
+$routes->group('member', ['namespace' => 'App\Controllers', 'filter' => 'cors'], function ($routes) {
     $routes->post('login', 'AuthController::memberLogin');
     $routes->post('register', 'AuthController::memberRegister');
     $routes->patch('username/(:num)', 'MemberController::updateUsername/$1', ['filter' => 'auth']);
     $routes->get('peminjaman/(:any)', 'MemberController::getPeminjamanUser/$1', ['filter' => 'auth']);
 });
 
-$routes->group('admin', ['namespace' => 'App\Controllers'], function ($routes) {
+$routes->group('admin', ['namespace' => 'App\Controllers', 'filter' => 'cors'], function ($routes) {
     $routes->post('login', 'AuthController::adminLogin');
     $routes->post('approve/(:num)', 'AdminController::approvePeminjaman/$1', ['filter' => 'adminauth']);
     $routes->post('reject/(:num)', 'AdminController::rejectPeminjaman/$1', ['filter' => 'adminauth']);
@@ -21,7 +21,7 @@ $routes->group('admin', ['namespace' => 'App\Controllers'], function ($routes) {
     $routes->get('all-peminjaman', 'AdminController::getAllPeminjaman', ['filter' => 'adminauth']);
 });
 
-$routes->group('books', ['namespace' => 'App\Controllers', 'filter' => 'auth'], function ($routes) {
+$routes->group('books', ['namespace' => 'App\Controllers', ['filter' => ['auth', 'cors']]], function ($routes) {
     $routes->get('/', 'BookController::index');
     $routes->get('(:num)', 'BookController::show/$1');
     $routes->post('borrow/(:num)/(:num)/(:num)', 'BookController::borrowBook/$1/$2/$3');
