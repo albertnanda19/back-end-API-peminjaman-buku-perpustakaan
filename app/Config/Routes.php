@@ -17,6 +17,8 @@ $routes->group('admin', ['namespace' => 'App\Controllers'], function ($routes) {
     $routes->put('add/book', 'AdminController::addBook', ['filter' => 'adminauth']);
     $routes->patch('edit-book/(:num)', 'AdminController::editBook/$1', ['filter' => 'adminauth']);
     $routes->delete('delete-book/(:num)', 'AdminController::deleteBook/$1', ['filter' => 'adminauth']);
+    $routes->put('return/(:num)', 'AdminController::returnBook/$1', ['filter' => 'adminauth']);
+    $routes->get('all-peminjaman', 'AdminController::getAllPeminjaman', ['filter' => 'adminauth']);
 });
 
 $routes->group('books', ['namespace' => 'App\Controllers', 'filter' => 'auth'], function ($routes) {

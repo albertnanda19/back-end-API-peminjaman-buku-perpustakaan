@@ -201,4 +201,43 @@ class AdminController extends BaseController
 
         return $this->respond(['message' => 'Book deleted successfully']);
     }
+
+    public function returnBook($peminjamanId)
+    {
+        $peminjamanModel = new PeminjamanModel();
+        $bookModel = new BookModel();
+
+        $peminjaman = $peminjamanModel->find($peminjamanId);
+
+        if (!$peminjaman) {
+            return $this->failNotFound('Peminjaman Not Found');
+        }
+
+        $peminjamanModel->update($peminjamanId, ['status' => 'returned']);
+
+        $remainingBooks = $bookModel->find($peminjaman['id_buku']);
+        $newQuantity = $remainingBooks['jumlah'] + $peminjaman['jumlah'];
+
+        $bookModel->update($peminjaman['id_buku'], ['jumlah' => $newQuantity]);
+
+        $book = $bookModel->find($peminjaman['id_buku']);
+        if ($book['status'] == 'unavailable') {
+            $bookModel->update($peminjaman['id_buku'], ['status' => 'available']);
+        }
+
+        return $this->respond(['message' => 'Book returned successfully']);
+    }
+
+    public function getAllPeminjaman()
+    {
+        $peminjamanModel = new PeminjamanModel();
+
+        $peminjaman = $peminjamanModel->findAll();
+
+        if (empty($peminjaman)) {
+            return $this->respond(['message' => 'No Peminjaman Found']);
+        }
+
+        return $this->respond(['peminjaman' => $peminjaman]);
+    }
 }
