@@ -31,7 +31,7 @@ class AuthController extends Controller
         $member = $memberModel->where('username', $data->username)->first();
 
         if (!$member || !password_verify($data->password, $member['password'])) {
-            return $this->failUnauthorized('Invalid credentials');
+            return $this->failUnauthorized('Username atau password yang anda masukkan salah !');
         }
 
         $token = $this->generateToken($member['id'], $member['username'], 'member');
@@ -58,7 +58,7 @@ class AuthController extends Controller
         $admin = $adminModel->where('username', $data->username)->first();
 
         if (!$admin || !password_verify($data->password, $admin['password'])) {
-            return $this->failUnauthorized('Invalid credentials');
+            return $this->failUnauthorized('Username atau password yang anda masukkan salah !');
         }
 
         $token = $this->generateToken($admin['id'], $admin['username'], 'admin');

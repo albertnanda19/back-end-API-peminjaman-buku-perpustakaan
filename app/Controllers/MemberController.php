@@ -47,4 +47,47 @@ class MemberController extends BaseController
 
         return $this->respond(['peminjaman' => $peminjaman]);
     }
+
+    public function getPeminjamanByUserId($userId)
+    {
+        $peminjamanModel = new PeminjamanModel();
+        $memberModel = new MemberModel();
+
+        $user = $memberModel->find($userId);
+
+        if (!$user) {
+            return $this->failNotFound('User not found');
+        }
+
+        $peminjaman = $peminjamanModel
+            ->where('nama_peminjam', $user['username'])
+            ->where('status !=', 'returned')
+            ->findAll();
+
+        if (empty($peminjaman)) {
+            return $this->respond(['message' => 'No peminjaman found for this user.']);
+        }
+
+        return $this->respond(['peminjaman' => $peminjaman]);
+    }
+
+    public function getHistoryPeminjaman($userId)
+    {
+        $peminjamanModel = new PeminjamanModel();
+        $memberModel = new MemberModel();
+
+        $user = $memberModel->find($userId);
+
+        if (!$user) {
+            return $this->fail('User tidak ditemukan');
+        }
+
+        $returnedPeminjaman = $peminjamanModel->where('nama_peminjam', $user['username'])->where('status', 'returned')->findAll();
+
+        if (empty($returnedPeminjaman)) {
+            return $this->respond(['message' => 'User ini belum meminjam buku']);
+        }
+
+        return $this->respond(['returnedpeminjaman' => $returnedPeminjaman]);
+    }
 }

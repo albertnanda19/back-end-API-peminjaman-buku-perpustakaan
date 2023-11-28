@@ -4,7 +4,9 @@ $routes->group('member', ['namespace' => 'App\Controllers', 'filter' => 'cors'],
     $routes->post('login', 'AuthController::memberLogin');
     $routes->post('register', 'AuthController::memberRegister');
     $routes->patch('username/(:num)', 'MemberController::updateUsername/$1', ['filter' => 'auth']);
-    $routes->get('peminjaman/(:any)', 'MemberController::getPeminjamanUser/$1', ['filter' => 'auth']);
+    // $routes->get('peminjaman/(:any)', 'MemberController::getPeminjamanUser/$1', ['filter' => 'auth']);
+    $routes->get('peminjaman/(:segment)', 'MemberController::getPeminjamanByUserId/$1', ['filter' => 'auth']);
+    $routes->get('history/(:segment)', 'MemberController::getHistoryPeminjaman/$1', ['filter' => 'auth']);
 });
 
 $routes->group('admin', ['namespace' => 'App\Controllers', 'filter' => 'cors'], function ($routes) {
